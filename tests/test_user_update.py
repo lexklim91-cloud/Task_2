@@ -2,6 +2,7 @@
 import pytest
 import allure
 from api.user_api import UserAPI
+from helpers import unique_user_data
 
 user_api = UserAPI()
 
@@ -31,10 +32,11 @@ class TestUpdateUser:
         ("email", "unauth@example.com"),
         ("name", "UnauthUser")
     ])
-    def test_update_user_without_auth_fails(self, unique_user_data, field_to_update, new_value):
+    def test_update_user_without_auth_fails(self, field_to_update, new_value):
         
+        user_data = unique_user_data()
         # Создаем пользователя
-        created = user_api.create_user_and_get_tokens(unique_user_data)
+        created = user_api.create_user_and_get_tokens(user_data)
         update_data = {field_to_update: new_value}
         # Пытаемся обновить без токена
         response = user_api.update_user(None, update_data)

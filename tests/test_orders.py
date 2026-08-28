@@ -21,8 +21,8 @@ class TestCreateOrder:
     
     
     @allure.step("""Создание заказа с неверным хешем ингредиента - ошибка 500""")
-    def test_create_order_with_invalid_ingredient_hash_fails(self, created_user, invalid_ingredient_hash):
-        response = orders_api.create_order(created_user["accessToken"], [invalid_ingredient_hash])
+    def test_create_order_with_invalid_ingredient_hash_fails(self, created_user):
+        response = orders_api.create_order(created_user["accessToken"], ["invalid_hash_12345"])
         assert response.status_code == 500
     
     

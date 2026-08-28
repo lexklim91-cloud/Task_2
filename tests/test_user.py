@@ -2,20 +2,22 @@
 import pytest
 import allure
 from api.user_api import UserAPI
+from helpers import unique_user_data
 
 user_api = UserAPI()
 
 
 class TestCreateUser:
     @allure.step("""Создание уникального пользователя - успешный сценарий""")
-    def test_create_unique_user_success(self, unique_user_data):
+    def test_create_unique_user_success(self):
         
-        response = user_api.register_user(unique_user_data)
+        user_data = unique_user_data()
+        response = user_api.register_user(user_data)
         data = response.json()
         assert response.status_code == 200
         assert data["success"] is True
-        assert data["user"]["email"] == unique_user_data["email"]
-        assert data["user"]["name"] == unique_user_data["name"]
+        assert data["user"]["email"] == user_data["email"]
+        assert data["user"]["name"] == user_data["name"]
         assert "accessToken" in data
         assert "refreshToken" in data
         assert data["accessToken"].startswith("Bearer ")
@@ -43,9 +45,9 @@ class TestCreateUser:
     
     @allure.step("""Создание пользователя без одного обязательного поля - ошибка 403""")
     @pytest.mark.parametrize("missing_field", ["email", "password", "name"])
-    def test_create_user_missing_field_fails(self, unique_user_data, missing_field):
+    def test_create_user_missing_field_fails(self, missing_field):
         
-        user_data = unique_user_data.copy()
+        user_data = unique_user_data().copy()
         del user_data[missing_field]
         
         response = user_api.register_user(user_data)
